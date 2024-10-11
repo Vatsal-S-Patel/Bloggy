@@ -1,1 +1,2 @@
-# Bloggy - Blog Application
+# Bloggy
+A Blog Application

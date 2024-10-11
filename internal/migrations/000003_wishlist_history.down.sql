@@ -1,0 +1,7 @@
+BEGIN;
+
+DROP TABLE IF EXISTS wishlists;
+
+DROP TABLE IF EXISTS reading_history;
+
+COMMIT;

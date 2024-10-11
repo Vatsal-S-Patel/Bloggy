@@ -1,0 +1,11 @@
+BEGIN;
+
+DROP TABLE IF EXISTS followers;
+
+DROP TABLE IF EXISTS users;
+
+DROP TABLE IF EXISTS admins;
+
+DROP TABLE IF EXISTS superadmins;
+
+COMMIT;

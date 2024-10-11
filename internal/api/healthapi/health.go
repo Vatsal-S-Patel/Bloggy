@@ -17,12 +17,6 @@ func New(app *app.App) *api {
 }
 
 func (api *api) Check(c *fiber.Ctx) error {
-	// m := map[string]interface{}{
-	// 	"k": "sdasd",
-	// 	"ad": 1,
-	// 	"adss": true,
-	// 	"ads": 2.323,
-	// }
 	return models.SendResponse(c, fiber.StatusOK, models.Response{
 		Message: "Server Health OK",
 	})
