@@ -4,6 +4,7 @@ package models
 type Config struct {
 	ServerConfig   ServerConfig   `yaml:"server"`
 	PostgresConfig PostgresConfig `yaml:"postgres"`
+	JWTSecret      string         `yaml:"jwt_secret"`
 }
 
 type ServerConfig struct {

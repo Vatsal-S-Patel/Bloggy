@@ -1,4 +1,7 @@
 
+run:
+	go run ./cmd/
+
 createmigration:
 	migrate create -ext sql -dir internal/migrations -seq ${name}
 
