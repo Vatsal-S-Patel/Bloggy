@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Vatsal-S-Patel/Bloggy/internal/api/healthapi"
+	"github.com/Vatsal-S-Patel/Bloggy/internal/api/userapi"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/app"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
@@ -53,8 +54,13 @@ func ListenAndServe(app *app.App) {
 
 func RegisterRoutes(fiberApp *fiber.App, app *app.App) {
 	healthAPI := healthapi.New(app)
+	userAPI := userapi.New(app)
 
 	router := fiberApp.Group("/v1")
 
 	router.Get("/health", healthAPI.Check)
+
+	userRouter := router.Group("/users")
+	userRouter.Post("/register", userAPI.Register)
+	userRouter.Post("/login", userAPI.Login)
 }

@@ -1,21 +1,21 @@
 package dto
 
-type UserRegistration struct {
+type UserRegistrationRequest struct {
+	Username string `json:"username" validate:"required,max=30"`
+	Email    string `json:"email" validate:"required,email,max=70"`
+	Password string `json:"password" validate:"required,min=8,password"`
+	Bio      string `json:"bio" validate:"max=500"`
+	Avatar   string `json:"avatar" validate:"omitempty,url"`
+}
+
+type AdminRegistrationRequest struct {
 	Username string `json:"username"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
-	Bio      string `json:"bio"`
 	Avatar   string `json:"avatar"`
 }
 
-type AdminRegistration struct {
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-	Avatar   string `json:"avatar"`
-}
-
-type SuperAdminRegistration struct {
+type SuperAdminRegistrationRequest struct {
 	Username string `json:"username"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
@@ -27,6 +27,10 @@ type FollowRequest struct {
 }
 
 type LoginRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username string `json:"username" validate:"required,max=30"`
+	Password string `json:"password" validate:"required,min=8,password"`
+}
+
+type UserLoginResponse struct {
+	AccessToken string `json:"access_token"`
 }
