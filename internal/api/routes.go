@@ -5,9 +5,12 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/Vatsal-S-Patel/Bloggy/internal/api/blogapi"
+	"github.com/Vatsal-S-Patel/Bloggy/internal/api/draftapi"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/api/healthapi"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/api/userapi"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/app"
+	"github.com/Vatsal-S-Patel/Bloggy/internal/middlewares"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 )
@@ -55,6 +58,10 @@ func ListenAndServe(app *app.App) {
 func RegisterRoutes(fiberApp *fiber.App, app *app.App) {
 	healthAPI := healthapi.New(app)
 	userAPI := userapi.New(app)
+	blogAPI := blogapi.New(app)
+	draftAPI := draftapi.New(app)
+
+	userAuthMiddleware := middlewares.UserAuthMiddleware(app)
 
 	router := fiberApp.Group("/v1")
 
@@ -63,4 +70,14 @@ func RegisterRoutes(fiberApp *fiber.App, app *app.App) {
 	userRouter := router.Group("/users")
 	userRouter.Post("/register", userAPI.Register)
 	userRouter.Post("/login", userAPI.Login)
+
+	blogRouter := router.Group("/blogs")
+	blogRouter.Post("/", userAuthMiddleware, blogAPI.Publish)
+
+	draftRouter := router.Group("/drafts")
+	draftRouter.Post("/", userAuthMiddleware, draftAPI.Add)
+	draftRouter.Get("/", userAuthMiddleware, draftAPI.GetAll)
+	draftRouter.Get("/:draftID", userAuthMiddleware, draftAPI.Get)
+	draftRouter.Put("/:draftID", userAuthMiddleware, draftAPI.Update)
+	draftRouter.Delete("/:draftID", userAuthMiddleware, draftAPI.Remove)
 }

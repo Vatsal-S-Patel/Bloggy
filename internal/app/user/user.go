@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 
+	"github.com/Vatsal-S-Patel/Bloggy/internal/consts"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/errs"
 	"github.com/Vatsal-S-Patel/Bloggy/models"
 	"github.com/google/uuid"
@@ -32,7 +33,7 @@ func (s *service) RegisterUser(user *models.User) error {
 	_, err := s.DB.Exec(query, user.ID, user.Username, user.Email, user.Password, user.Bio, user.Avatar, user.Followers, user.Following, user.JoinedAt, user.LastLoginAt)
 	if err != nil {
 		pqErr, ok := err.(*pq.Error)
-		if ok && pqErr.Code == "23505" {
+		if ok && pqErr.Code == consts.DB_CODE_UNIQUE_CONSTRAINT_VIOLATION {
 			switch pqErr.Constraint {
 			case "users_username_key":
 				return errs.ErrUsernameAlreadyInUse

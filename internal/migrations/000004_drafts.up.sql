@@ -1,0 +1,14 @@
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS drafts (
+  id UUID PRIMARY KEY,
+  title VARCHAR(130) NOT NULL,
+  subtitle VARCHAR(170),
+  content TEXT NOT NULL,
+  author_id UUID NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL,
+  FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+COMMIT;
