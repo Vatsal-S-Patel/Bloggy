@@ -13,3 +13,6 @@ migratedown:
 
 removedirtyread:
 	migrate -path internal/migrations -database $(POSTGRES_URL_BLOGGY) force 1
+
+lint:
+	golangci-lint run

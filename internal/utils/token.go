@@ -13,7 +13,7 @@ func GenerateJWT(userID string, secretKey []byte) (string, error) {
 		jwt.SigningMethodHS256,
 		jwt.MapClaims{
 			"id":  userID,
-			"exp": time.Now().Add(1 * time.Hour).Unix(),
+			"exp": time.Now().Add(20 * time.Minute).Unix(),
 		},
 	)
 
@@ -26,11 +26,18 @@ func GenerateJWT(userID string, secretKey []byte) (string, error) {
 }
 
 func ExtractJWTClaims(c *fiber.Ctx) map[string]interface{} {
-	token := c.Locals("claims").(*jwt.Token)
-	return token.Claims.(jwt.MapClaims)
+	token, ok := c.Locals("claims").(*jwt.Token)
+	if ok {
+		return token.Claims.(jwt.MapClaims)
+	}
+	return nil
 }
 
 func ExtractUserIDFromContext(c *fiber.Ctx) (uuid.UUID, error) {
 	claims := ExtractJWTClaims(c)
-	return uuid.Parse(claims["id"].(string))
+	userID, ok := claims["id"].(string)
+	if ok {
+		return uuid.Parse(userID)
+	}
+	return uuid.Nil, nil
 }

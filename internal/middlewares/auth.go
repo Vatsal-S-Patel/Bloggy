@@ -28,3 +28,20 @@ func UserAuthMiddleware(app *app.App) fiber.Handler {
 		},
 	})
 }
+
+func OptionalUserAuthMiddleware(app *app.App) fiber.Handler {
+	return jwtware.New(jwtware.Config{
+		SigningKey: []byte(app.Config.JWTSecret),
+		ContextKey: "claims",
+		ErrorHandler: func(c *fiber.Ctx, err error) error {
+			if c.Get("Authorization") == "" {
+				return c.Next()
+			}
+
+			app.Logger.Error("failed in optional user auth middleware:" + err.Error())
+			return models.SendResponse(c, fiber.StatusUnauthorized, models.Response{
+				Message: err.Error(),
+			})
+		},
+	})
+}

@@ -17,8 +17,8 @@ type service struct {
 }
 
 type Service interface {
-	RegisterUser(*models.User) error
-	GetIDPasswordByUsername(string) (uuid.UUID, string, error)
+	RegisterUser(user *models.User) error
+	GetIDPasswordByUsername(username string) (uuid.UUID, string, error)
 }
 
 func NewService(db *sqlx.DB) Service {

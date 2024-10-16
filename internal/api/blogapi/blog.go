@@ -143,3 +143,38 @@ func (api *api) Publish(c *fiber.Ctx) error {
 		Message: "Blog published successfully",
 	})
 }
+
+func (api *api) Get(c *fiber.Ctx) error {
+	blogID, err := uuid.Parse(c.Params("blogID"))
+	if err != nil {
+		return models.SendResponse(c, fiber.StatusBadRequest, models.Response{
+			Message: "Blog ID is not valid",
+		})
+	}
+
+	userID, err := utils.ExtractUserIDFromContext(c)
+	if err != nil {
+		api.app.Logger.Error("failed to extract user id from context:" + err.Error())
+		return models.SendResponse(c, fiber.StatusInternalServerError, models.Response{
+			Message: "Internal Server Error",
+		})
+	}
+
+	blog, err := api.app.BlogService.Get(blogID, userID)
+	if err != nil {
+		if errors.Is(err, errs.ErrBlogNotFound) {
+			return models.SendResponse(c, fiber.StatusNotFound, models.Response{
+				Message: "Blog not found",
+			})
+		}
+		api.app.Logger.Error("failed to fetch blog by id:" + err.Error())
+		return models.SendResponse(c, fiber.StatusInternalServerError, models.Response{
+			Message: "Internal Server Error",
+		})
+	}
+
+	return models.SendResponse(c, fiber.StatusOK, models.Response{
+		Message: "Fetched blog successfully",
+		Data:    blog,
+	})
+}

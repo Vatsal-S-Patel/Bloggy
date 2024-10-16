@@ -12,4 +12,6 @@ var (
 	ErrTagNotFound = errors.New("tag not found")
 
 	ErrDraftNotFound = errors.New("drafts not found")
+
+	ErrHistoryNotFound = errors.New("history not found")
 )

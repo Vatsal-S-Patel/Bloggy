@@ -15,11 +15,11 @@ type service struct {
 }
 
 type Service interface {
-	Add(*models.Draft) error
-	Get(uuid.UUID) (*models.Draft, error)
-	GetAll(uuid.UUID) ([]*models.Draft, error)
-	Update(*models.Draft) error
-	Remove(id uuid.UUID) error
+	Add(draft *models.Draft) error
+	Get(draftID uuid.UUID) (*models.Draft, error)
+	GetAll(authorID uuid.UUID) ([]*models.Draft, error)
+	Update(draft *models.Draft) error
+	Remove(draftID uuid.UUID) error
 }
 
 func NewService(db *sqlx.DB) Service {
@@ -45,10 +45,10 @@ func (s *service) GetAll(authorID uuid.UUID) ([]*models.Draft, error) {
 	var drafts []*models.Draft
 	err := s.DB.Select(&drafts, query, authorID)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, errs.ErrDraftNotFound
-		}
 		return nil, err
+	}
+	if len(drafts) == 0 {
+		return nil, errs.ErrDraftNotFound
 	}
 
 	return drafts, nil

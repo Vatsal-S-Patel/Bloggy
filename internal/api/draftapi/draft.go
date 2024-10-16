@@ -102,6 +102,7 @@ func (api *api) Add(c *fiber.Ctx) error {
 		Message: "Draft saved successfully",
 	})
 }
+
 func (api *api) GetAll(c *fiber.Ctx) error {
 	authorID, err := utils.ExtractUserIDFromContext(c)
 	if err != nil {
@@ -125,7 +126,7 @@ func (api *api) GetAll(c *fiber.Ctx) error {
 	}
 
 	return models.SendResponse(c, fiber.StatusOK, models.Response{
-		Message: "Fetch drafts successfully",
+		Message: "Fetched drafts successfully",
 		Data:    drafts,
 	})
 }
@@ -152,7 +153,7 @@ func (api *api) Get(c *fiber.Ctx) error {
 	}
 
 	return models.SendResponse(c, fiber.StatusOK, models.Response{
-		Message: "Fetch draft successfully",
+		Message: "Fetched draft successfully",
 		Data:    draft,
 	})
 }

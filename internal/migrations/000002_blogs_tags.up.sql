@@ -7,12 +7,15 @@ CREATE TABLE IF NOT EXISTS blogs (
   content TEXT NOT NULL,
   ft_image TEXT,
   author_id UUID NOT NULL,
+  author VARCHAR(30) NOT NULL,
   created_at TIMESTAMPTZ NOT NULL,
   updated_at TIMESTAMPTZ NOT NULL,
   FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE INDEX IF NOT EXISTS idx_blogs_title ON blogs(title);
+
+CREATE INDEX IF NOT EXISTS idx_blogs_author_id ON blogs(author_id);
 
 
 CREATE TABLE IF NOT EXISTS tags (

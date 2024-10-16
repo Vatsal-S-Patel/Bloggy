@@ -8,6 +8,7 @@ import (
 	"github.com/Vatsal-S-Patel/Bloggy/internal/api/blogapi"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/api/draftapi"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/api/healthapi"
+	"github.com/Vatsal-S-Patel/Bloggy/internal/api/historyapi"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/api/userapi"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/app"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/middlewares"
@@ -60,7 +61,9 @@ func RegisterRoutes(fiberApp *fiber.App, app *app.App) {
 	userAPI := userapi.New(app)
 	blogAPI := blogapi.New(app)
 	draftAPI := draftapi.New(app)
+	historyAPI := historyapi.New(app)
 
+	optionalUserAuthMiddleware := middlewares.OptionalUserAuthMiddleware(app)
 	userAuthMiddleware := middlewares.UserAuthMiddleware(app)
 
 	router := fiberApp.Group("/v1")
@@ -73,6 +76,7 @@ func RegisterRoutes(fiberApp *fiber.App, app *app.App) {
 
 	blogRouter := router.Group("/blogs")
 	blogRouter.Post("/", userAuthMiddleware, blogAPI.Publish)
+	blogRouter.Get("/:blogID", optionalUserAuthMiddleware, blogAPI.Get)
 
 	draftRouter := router.Group("/drafts")
 	draftRouter.Post("/", userAuthMiddleware, draftAPI.Add)
@@ -80,4 +84,9 @@ func RegisterRoutes(fiberApp *fiber.App, app *app.App) {
 	draftRouter.Get("/:draftID", userAuthMiddleware, draftAPI.Get)
 	draftRouter.Put("/:draftID", userAuthMiddleware, draftAPI.Update)
 	draftRouter.Delete("/:draftID", userAuthMiddleware, draftAPI.Remove)
+
+	historyRouter := router.Group("/history")
+	historyRouter.Get("/", userAuthMiddleware, historyAPI.Get)
+	historyRouter.Delete("/", userAuthMiddleware, historyAPI.RemoveAll)
+	historyRouter.Delete("/:blogID", userAuthMiddleware, historyAPI.Remove)
 }
