@@ -260,7 +260,5 @@ func (api *api) Remove(c *fiber.Ctx) error {
 		})
 	}
 
-	return models.SendResponse(c, fiber.StatusNoContent, models.Response{
-		Message: "Draft removed successfully",
-	})
+	return models.SendResponse(c, fiber.StatusNoContent, nil)
 }

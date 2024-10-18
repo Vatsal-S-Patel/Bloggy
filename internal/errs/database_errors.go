@@ -14,4 +14,10 @@ var (
 	ErrDraftNotFound = errors.New("drafts not found")
 
 	ErrHistoryNotFound = errors.New("history not found")
+
+	ErrAlreadyInReadLater = errors.New("blog already in readlater")
+
+	ErrBookmarkNameAlreadyInUse = errors.New("bookmark name in use")
+	ErrBlogAlreadyInBookmark    = errors.New("blog already in bookmark")
+	ErrBookmarkNotFound         = errors.New("bookmark not found")
 )

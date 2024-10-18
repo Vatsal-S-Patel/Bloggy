@@ -6,9 +6,11 @@ import (
 	"time"
 
 	"github.com/Vatsal-S-Patel/Bloggy/internal/api/blogapi"
+	"github.com/Vatsal-S-Patel/Bloggy/internal/api/bookmarkapi"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/api/draftapi"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/api/healthapi"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/api/historyapi"
+	"github.com/Vatsal-S-Patel/Bloggy/internal/api/readlaterapi"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/api/userapi"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/app"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/middlewares"
@@ -62,6 +64,8 @@ func RegisterRoutes(fiberApp *fiber.App, app *app.App) {
 	blogAPI := blogapi.New(app)
 	draftAPI := draftapi.New(app)
 	historyAPI := historyapi.New(app)
+	bookmarkAPI := bookmarkapi.New(app)
+	readlaterAPI := readlaterapi.New(app)
 
 	optionalUserAuthMiddleware := middlewares.OptionalUserAuthMiddleware(app)
 	userAuthMiddleware := middlewares.UserAuthMiddleware(app)
@@ -89,4 +93,18 @@ func RegisterRoutes(fiberApp *fiber.App, app *app.App) {
 	historyRouter.Get("/", userAuthMiddleware, historyAPI.Get)
 	historyRouter.Delete("/", userAuthMiddleware, historyAPI.RemoveAll)
 	historyRouter.Delete("/:blogID", userAuthMiddleware, historyAPI.Remove)
+
+	bookmarkRouter := router.Group("/bookmarks")
+	bookmarkRouter.Post("/", userAuthMiddleware, bookmarkAPI.Add)
+	bookmarkRouter.Post("/:bookmarkID/:blogID", userAuthMiddleware, bookmarkAPI.AddBlog)
+	bookmarkRouter.Get("/", userAuthMiddleware, bookmarkAPI.GetAll)
+	bookmarkRouter.Get("/:bookmarkID", userAuthMiddleware, bookmarkAPI.Get)
+	bookmarkRouter.Get("/blogs/:bookmarkID", userAuthMiddleware, bookmarkAPI.GetBlogs)
+	bookmarkRouter.Put("/:bookmarkID", userAuthMiddleware, bookmarkAPI.Update)
+	bookmarkRouter.Delete("/:bookmarkID", userAuthMiddleware, bookmarkAPI.Remove)
+	bookmarkRouter.Delete("/:bookmarkID/:blogID", userAuthMiddleware, bookmarkAPI.RemoveBlog)
+
+	readlaterRouter := router.Group("/readlater")
+	readlaterRouter.Post("/:blogID", userAuthMiddleware, readlaterAPI.Add)
+	readlaterRouter.Delete("/:blogID", userAuthMiddleware, readlaterAPI.Remove)
 }

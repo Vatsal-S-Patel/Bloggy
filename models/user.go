@@ -44,10 +44,10 @@ type Follow struct {
 	CreatedAt   time.Time `json:"created_at"`
 }
 
-type Wishlist struct {
-	UserID    uuid.UUID `json:"user_id"`
-	BlogID    uuid.UUID `json:"blog_id"`
-	CreatedAt time.Time `json:"created_at"`
+type ReadLater struct {
+	UserID    uuid.UUID `json:"user_id" db:"user_id"`
+	BlogID    uuid.UUID `json:"blog_id" db:"blog_id"`
+	CreatedAt time.Time `json:"created_at" db:"created_at"`
 }
 
 type ReadingHistory struct {

@@ -6,8 +6,10 @@ import (
 	"os"
 
 	"github.com/Vatsal-S-Patel/Bloggy/internal/app/blog"
+	"github.com/Vatsal-S-Patel/Bloggy/internal/app/bookmark"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/app/draft"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/app/history"
+	"github.com/Vatsal-S-Patel/Bloggy/internal/app/readlater"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/app/user"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/consts"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/utils"
@@ -26,10 +28,12 @@ type App struct {
 	Logger    *zap.Logger
 	Validator *validator.Validate
 
-	UserService    user.Service
-	BlogService    blog.Service
-	DraftService   draft.Service
-	HistoryService history.Service
+	UserService      user.Service
+	BlogService      blog.Service
+	DraftService     draft.Service
+	HistoryService   history.Service
+	ReadLaterService readlater.Service
+	BookmarkService  bookmark.Service
 }
 
 func New() (*App, error) {
@@ -85,6 +89,8 @@ func New() (*App, error) {
 	app.BlogService = blog.NewService(app.DB)
 	app.DraftService = draft.NewService(app.DB)
 	app.HistoryService = history.NewService(app.DB)
+	app.ReadLaterService = readlater.NewService(app.DB)
+	app.BookmarkService = bookmark.NewService(app.DB)
 
 	return app, nil
 }

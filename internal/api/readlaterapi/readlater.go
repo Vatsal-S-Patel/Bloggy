@@ -1,7 +1,8 @@
-package historyapi
+package readlaterapi
 
 import (
 	"errors"
+	"time"
 
 	"github.com/Vatsal-S-Patel/Bloggy/internal/app"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/errs"
@@ -21,7 +22,14 @@ func New(app *app.App) *api {
 	}
 }
 
-func (api *api) Get(c *fiber.Ctx) error {
+func (api *api) Add(c *fiber.Ctx) error {
+	blogID, err := uuid.Parse(c.Params("blogID"))
+	if err != nil {
+		return models.SendResponse(c, fiber.StatusBadRequest, models.Response{
+			Message: "Blog ID is not valid",
+		})
+	}
+
 	userID, err := utils.ExtractUserIDFromContext(c)
 	if err != nil {
 		api.app.Logger.Error("failed to extract user id from context:" + err.Error())
@@ -30,22 +38,27 @@ func (api *api) Get(c *fiber.Ctx) error {
 		})
 	}
 
-	history, err := api.app.HistoryService.Get(userID)
+	readLaterBlog := &models.ReadLater{
+		UserID:    userID,
+		BlogID:    blogID,
+		CreatedAt: time.Now(),
+	}
+
+	err = api.app.ReadLaterService.Add(readLaterBlog)
 	if err != nil {
-		if errors.Is(err, errs.ErrHistoryNotFound) {
-			return models.SendResponse(c, fiber.StatusNotFound, models.Response{
-				Message: "You have no history",
+		if errors.Is(err, errs.ErrAlreadyInReadLater) {
+			return models.SendResponse(c, fiber.StatusOK, models.Response{
+				Message: "Blog already in read later",
 			})
 		}
-		api.app.Logger.Error("failed to fetch history:" + err.Error())
+		api.app.Logger.Error("failed to add blog into read later:" + err.Error())
 		return models.SendResponse(c, fiber.StatusInternalServerError, models.Response{
 			Message: "Internal Server Error",
 		})
 	}
 
 	return models.SendResponse(c, fiber.StatusOK, models.Response{
-		Message: "Fetched reading history",
-		Data:    history,
+		Message: "Added to read later successfully",
 	})
 }
 
@@ -53,7 +66,7 @@ func (api *api) Remove(c *fiber.Ctx) error {
 	blogID, err := uuid.Parse(c.Params("blogID"))
 	if err != nil {
 		return models.SendResponse(c, fiber.StatusBadRequest, models.Response{
-			Message: "BlogID is not valid",
+			Message: "Blog ID is not valid",
 		})
 	}
 
@@ -65,39 +78,14 @@ func (api *api) Remove(c *fiber.Ctx) error {
 		})
 	}
 
-	err = api.app.HistoryService.Remove(userID, blogID)
+	err = api.app.ReadLaterService.Remove(userID, blogID)
 	if err != nil {
-		if errors.Is(err, errs.ErrHistoryNotFound) {
+		if errors.Is(err, errs.ErrBlogNotFound) {
 			return models.SendResponse(c, fiber.StatusNotFound, models.Response{
-				Message: "History not found",
+				Message: "Blog not found",
 			})
 		}
-		api.app.Logger.Error("failed to remove blog from history:" + err.Error())
-		return models.SendResponse(c, fiber.StatusInternalServerError, models.Response{
-			Message: "Internal Server Error",
-		})
-	}
-
-	return models.SendResponse(c, fiber.StatusNoContent, nil)
-}
-
-func (api *api) RemoveAll(c *fiber.Ctx) error {
-	userID, err := utils.ExtractUserIDFromContext(c)
-	if err != nil {
-		api.app.Logger.Error("failed to extract user id from context:" + err.Error())
-		return models.SendResponse(c, fiber.StatusInternalServerError, models.Response{
-			Message: "Internal Server Error",
-		})
-	}
-
-	err = api.app.HistoryService.RemoveAll(userID)
-	if err != nil {
-		if errors.Is(err, errs.ErrHistoryNotFound) {
-			return models.SendResponse(c, fiber.StatusNotFound, models.Response{
-				Message: "You have no history",
-			})
-		}
-		api.app.Logger.Error("failed to remove all history:" + err.Error())
+		api.app.Logger.Error("failed to remove blog from read later:" + err.Error())
 		return models.SendResponse(c, fiber.StatusInternalServerError, models.Response{
 			Message: "Internal Server Error",
 		})

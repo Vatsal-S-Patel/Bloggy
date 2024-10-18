@@ -29,10 +29,10 @@ CREATE TABLE IF NOT EXISTS blog_tags (
     tag_id UUID NOT NULL,
     FOREIGN KEY (blog_id) REFERENCES blogs(id) ON DELETE CASCADE,
     FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE,
-    CONSTRAINT unique_tag_blog UNIQUE (tag_id, blog_id)
+    CONSTRAINT unique_blog_tags_blog_id_tag_id UNIQUE (blog_id, tag_id)
 );
 
-CREATE INDEX IF NOT EXISTS idx_blog_tags_blog_id ON blog_tags(blog_id);
+-- CREATE INDEX IF NOT EXISTS idx_blog_tags_blog_id ON blog_tags(blog_id);
 
 
 COMMIT;
