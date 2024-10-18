@@ -11,6 +11,7 @@ import (
 	"github.com/Vatsal-S-Patel/Bloggy/internal/api/healthapi"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/api/historyapi"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/api/readlaterapi"
+	"github.com/Vatsal-S-Patel/Bloggy/internal/api/tagapi"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/api/userapi"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/app"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/middlewares"
@@ -66,6 +67,7 @@ func RegisterRoutes(fiberApp *fiber.App, app *app.App) {
 	historyAPI := historyapi.New(app)
 	bookmarkAPI := bookmarkapi.New(app)
 	readlaterAPI := readlaterapi.New(app)
+	tagAPI := tagapi.New(app)
 
 	optionalUserAuthMiddleware := middlewares.OptionalUserAuthMiddleware(app)
 	userAuthMiddleware := middlewares.UserAuthMiddleware(app)
@@ -107,4 +109,8 @@ func RegisterRoutes(fiberApp *fiber.App, app *app.App) {
 	readlaterRouter := router.Group("/readlater")
 	readlaterRouter.Post("/:blogID", userAuthMiddleware, readlaterAPI.Add)
 	readlaterRouter.Delete("/:blogID", userAuthMiddleware, readlaterAPI.Remove)
+
+	tagRouter := router.Group("/tags")
+	tagRouter.Post("/", userAuthMiddleware, tagAPI.Add)
+	tagRouter.Get("/:tag", tagAPI.Get)
 }

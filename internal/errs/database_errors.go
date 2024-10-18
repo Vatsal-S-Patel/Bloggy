@@ -9,7 +9,8 @@ var (
 
 	ErrBlogNotFound = errors.New("blog not found")
 
-	ErrTagNotFound = errors.New("tag not found")
+	ErrTagNotFound     = errors.New("tag not found")
+	ErrTagAlreadyInUse = errors.New("tag already in use")
 
 	ErrDraftNotFound = errors.New("drafts not found")
 

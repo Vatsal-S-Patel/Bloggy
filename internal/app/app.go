@@ -10,6 +10,7 @@ import (
 	"github.com/Vatsal-S-Patel/Bloggy/internal/app/draft"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/app/history"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/app/readlater"
+	"github.com/Vatsal-S-Patel/Bloggy/internal/app/tag"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/app/user"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/consts"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/utils"
@@ -34,6 +35,7 @@ type App struct {
 	HistoryService   history.Service
 	ReadLaterService readlater.Service
 	BookmarkService  bookmark.Service
+	TagService       tag.Service
 }
 
 func New() (*App, error) {
@@ -91,6 +93,7 @@ func New() (*App, error) {
 	app.HistoryService = history.NewService(app.DB)
 	app.ReadLaterService = readlater.NewService(app.DB)
 	app.BookmarkService = bookmark.NewService(app.DB)
+	app.TagService = tag.NewService(app.DB)
 
 	return app, nil
 }
