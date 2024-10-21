@@ -20,8 +20,10 @@ CREATE INDEX IF NOT EXISTS idx_blogs_author_id ON blogs(author_id);
 
 CREATE TABLE IF NOT EXISTS tags (
   id UUID PRIMARY KEY,
-  name VARCHAR(50) NOT NULL UNIQUE
+  name VARCHAR(50) NOT NULL
 );
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_tags_name ON tags(LOWER(name));
 
 
 CREATE TABLE IF NOT EXISTS blog_tags (

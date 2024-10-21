@@ -1,9 +1,6 @@
 package tag
 
 import (
-	"database/sql"
-	"errors"
-
 	"github.com/Vatsal-S-Patel/Bloggy/internal/consts"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/errs"
 	"github.com/Vatsal-S-Patel/Bloggy/models"
@@ -18,7 +15,7 @@ type service struct {
 
 type Service interface {
 	Add(tag *models.Tag) error
-	Get(tagIdentifier string) (*models.Tag, error)
+	Get(tagIdentifier string) ([]*models.Tag, error)
 }
 
 func NewService(db *sqlx.DB) Service {
@@ -33,7 +30,7 @@ func (s *service) Add(tag *models.Tag) error {
 	_, err := s.DB.Exec(query, tag.ID, tag.Name)
 	if err != nil {
 		pqErr, ok := err.(*pq.Error)
-		if ok && pqErr.Code == consts.DB_CODE_UNIQUE_CONSTRAINT_VIOLATION && pqErr.Constraint == "tags_name_key" {
+		if ok && pqErr.Code == consts.DB_CODE_UNIQUE_CONSTRAINT_VIOLATION && pqErr.Constraint == "idx_tags_name" {
 			return errs.ErrTagAlreadyInUse
 		}
 		return err
@@ -42,22 +39,23 @@ func (s *service) Add(tag *models.Tag) error {
 	return nil
 }
 
-func (s *service) Get(tagIdentifier string) (*models.Tag, error) {
-	query := `SELECT id, name FROM tags WHERE name=$1`
+func (s *service) Get(tagIdentifier string) ([]*models.Tag, error) {
+	var tags []*models.Tag
+
+	query := `SELECT id, name FROM tags WHERE LOWER(name) LIKE $1 || '%'`
 
 	tagID, _ := uuid.Parse(tagIdentifier)
 	if tagID != uuid.Nil {
 		query = `SELECT id, name FROM tags WHERE id=$1`
 	}
 
-	var tag models.Tag
-	err := s.DB.Get(&tag, query, tagIdentifier)
+	err := s.DB.Select(&tags, query, tagIdentifier)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, errs.ErrTagNotFound
-		}
 		return nil, err
 	}
+	if len(tags) == 0 {
+		return nil, errs.ErrTagNotFound
+	}
 
-	return &tag, nil
+	return tags, nil
 }

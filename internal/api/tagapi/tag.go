@@ -2,6 +2,8 @@ package tagapi
 
 import (
 	"errors"
+	"net/url"
+	"strings"
 
 	"github.com/Vatsal-S-Patel/Bloggy/internal/app"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/dto"
@@ -79,7 +81,8 @@ func (api *api) Add(c *fiber.Ctx) error {
 }
 
 func (api *api) Get(c *fiber.Ctx) error {
-	tag, err := api.app.TagService.Get(c.Params("tag"))
+	tagParam, _ := url.QueryUnescape(strings.ToLower(c.Params("tag")))
+	tag, err := api.app.TagService.Get(tagParam)
 	if err != nil {
 		if errors.Is(err, errs.ErrTagNotFound) {
 			return models.SendResponse(c, fiber.StatusNotFound, models.Response{
