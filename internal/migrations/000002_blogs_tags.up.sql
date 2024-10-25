@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS blogs (
   subtitle VARCHAR(170),
   content TEXT NOT NULL,
   ft_image TEXT,
+  claps INT,
   author_id UUID NOT NULL,
   author VARCHAR(30) NOT NULL,
   created_at TIMESTAMPTZ NOT NULL,

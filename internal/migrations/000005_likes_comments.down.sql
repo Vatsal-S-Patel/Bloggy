@@ -1,0 +1,7 @@
+BEGIN;
+
+DROP TABLE IF EXISTS comments;
+
+DROP TABLE IF EXISTS clapped_blogs;
+
+COMMIT;

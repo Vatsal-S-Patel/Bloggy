@@ -35,21 +35,22 @@ func (s *service) Publish(blog *models.Blog, blogTags []*models.BlogTag) error {
 	if err != nil {
 		return err
 	}
+	defer func() {
+		_ = tx.Rollback()
+	}()
 
 	query := `SELECT username FROM users WHERE id=$1`
 
 	var author string
 	err = tx.Get(&author, query, blog.AuthorID)
 	if err != nil {
-		_ = tx.Rollback()
 		return err
 	}
 
-	query = `INSERT INTO blogs (id, title, subtitle, content, ft_image, author_id, author, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
+	query = `INSERT INTO blogs (id, title, subtitle, content, ft_image, claps, author_id, author, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`
 
-	_, err = tx.Exec(query, blog.ID, blog.Title, blog.Subtitle, blog.Content, blog.FtImage, blog.AuthorID, author, blog.CreatedAt, blog.UpdatedAt)
+	_, err = tx.Exec(query, blog.ID, blog.Title, blog.Subtitle, blog.Content, blog.FtImage, blog.Claps, blog.AuthorID, author, blog.CreatedAt, blog.UpdatedAt)
 	if err != nil {
-		_ = tx.Rollback()
 		return err
 	}
 
@@ -63,7 +64,6 @@ func (s *service) Publish(blog *models.Blog, blogTags []*models.BlogTag) error {
 
 		_, err = tx.Exec(queryBuilder.String()[:queryBuilder.Len()-1])
 		if err != nil {
-			_ = tx.Rollback()
 			pqErr, ok := err.(*pq.Error)
 			if ok && pqErr.Code == consts.DB_CODE_FOREIGN_KEY_CONSTRAINT_VIOLATION && pqErr.Constraint == "blog_tags_tag_id_fkey" {
 				return errs.ErrTagNotFound
@@ -72,12 +72,7 @@ func (s *service) Publish(blog *models.Blog, blogTags []*models.BlogTag) error {
 		}
 	}
 
-	err = tx.Commit()
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return tx.Commit()
 }
 
 func (s *service) Get(blogID, userID uuid.UUID) (*dto.Blog, error) {
@@ -99,7 +94,7 @@ func (s *service) Get(blogID, userID uuid.UUID) (*dto.Blog, error) {
 		readHistoryErrChan <- nil
 	}
 
-	query := `SELECT id, title, subtitle, content, ft_image, author_id, author, created_at, updated_at FROM blogs WHERE id=$1`
+	query := `SELECT id, title, subtitle, content, ft_image, claps, author_id, author, created_at, updated_at FROM blogs WHERE id=$1`
 
 	var blog dto.Blog
 	err := s.DB.Get(&blog, query, blogID)

@@ -21,4 +21,9 @@ var (
 	ErrBookmarkNameAlreadyInUse = errors.New("bookmark name in use")
 	ErrBlogAlreadyInBookmark    = errors.New("blog already in bookmark")
 	ErrBookmarkNotFound         = errors.New("bookmark not found")
+
+	ErrAlreadyClapped   = errors.New("already clapped")
+	ErrAlreadyUnClapped = errors.New("already unclapped")
+
+	ErrCommentNotFound = errors.New("comments not found")
 )

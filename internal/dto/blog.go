@@ -21,6 +21,7 @@ type Blog struct {
 	Subtitle  string        `json:"subtitle" db:"subtitle"`
 	Content   string        `json:"content" db:"content"`
 	FtImage   string        `json:"ft_image" db:"ft_image"`
+	Claps     int           `json:"claps" db:"claps"`
 	Tags      []*models.Tag `json:"tags"`
 	AuthorID  uuid.UUID     `json:"author_id" db:"author_id"`
 	Author    string        `json:"author" db:"author"`

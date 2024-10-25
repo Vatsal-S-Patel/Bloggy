@@ -6,7 +6,10 @@ import (
 	"time"
 
 	"github.com/Vatsal-S-Patel/Bloggy/internal/api/blogapi"
+	"github.com/Vatsal-S-Patel/Bloggy/internal/api/blogclapapi"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/api/bookmarkapi"
+	"github.com/Vatsal-S-Patel/Bloggy/internal/api/commentapi"
+	"github.com/Vatsal-S-Patel/Bloggy/internal/api/commentclapapi"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/api/draftapi"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/api/healthapi"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/api/historyapi"
@@ -68,6 +71,9 @@ func RegisterRoutes(fiberApp *fiber.App, app *app.App) {
 	bookmarkAPI := bookmarkapi.New(app)
 	readlaterAPI := readlaterapi.New(app)
 	tagAPI := tagapi.New(app)
+	commentAPI := commentapi.New(app)
+	blogClapAPI := blogclapapi.New(app)
+	commentClapAPI := commentclapapi.New(app)
 
 	optionalUserAuthMiddleware := middlewares.OptionalUserAuthMiddleware(app)
 	userAuthMiddleware := middlewares.UserAuthMiddleware(app)
@@ -113,4 +119,20 @@ func RegisterRoutes(fiberApp *fiber.App, app *app.App) {
 	tagRouter := router.Group("/tags")
 	tagRouter.Post("/", userAuthMiddleware, tagAPI.Add)
 	tagRouter.Get("/:tag", tagAPI.Get)
+
+	commentRouter := router.Group("/comments")
+	commentRouter.Post("/:blogID", userAuthMiddleware, commentAPI.Add)
+	commentRouter.Post("/:blogID/:parentCommentID", userAuthMiddleware, commentAPI.AddReply)
+	commentRouter.Get("/:blogID", commentAPI.Get)
+	commentRouter.Get("/:blogID/:parentCommentID", commentAPI.GetReplies)
+	commentRouter.Put("/:commentID", userAuthMiddleware, commentAPI.Update)
+	commentRouter.Delete("/:commentID", userAuthMiddleware, commentAPI.Remove)
+
+	blogClapRouter := router.Group("/blogclaps")
+	blogClapRouter.Post("/:blogID", userAuthMiddleware, blogClapAPI.Add)
+	blogClapRouter.Delete("/:blogID", userAuthMiddleware, blogClapAPI.Remove)
+
+	commentClapRouter := router.Group("/commentclaps")
+	commentClapRouter.Post("/:commentID", userAuthMiddleware, commentClapAPI.Add)
+	commentClapRouter.Delete("/:commentID", userAuthMiddleware, commentClapAPI.Remove)
 }

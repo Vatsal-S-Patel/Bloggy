@@ -6,7 +6,10 @@ import (
 	"os"
 
 	"github.com/Vatsal-S-Patel/Bloggy/internal/app/blog"
+	"github.com/Vatsal-S-Patel/Bloggy/internal/app/blogclap"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/app/bookmark"
+	"github.com/Vatsal-S-Patel/Bloggy/internal/app/comment"
+	"github.com/Vatsal-S-Patel/Bloggy/internal/app/commentclap"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/app/draft"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/app/history"
 	"github.com/Vatsal-S-Patel/Bloggy/internal/app/readlater"
@@ -29,13 +32,16 @@ type App struct {
 	Logger    *zap.Logger
 	Validator *validator.Validate
 
-	UserService      user.Service
-	BlogService      blog.Service
-	DraftService     draft.Service
-	HistoryService   history.Service
-	ReadLaterService readlater.Service
-	BookmarkService  bookmark.Service
-	TagService       tag.Service
+	UserService        user.Service
+	BlogService        blog.Service
+	DraftService       draft.Service
+	HistoryService     history.Service
+	ReadLaterService   readlater.Service
+	BookmarkService    bookmark.Service
+	TagService         tag.Service
+	CommentService     comment.Service
+	BlogClapService    blogclap.Service
+	CommentClapService commentclap.Service
 }
 
 func New() (*App, error) {
@@ -94,6 +100,9 @@ func New() (*App, error) {
 	app.ReadLaterService = readlater.NewService(app.DB)
 	app.BookmarkService = bookmark.NewService(app.DB)
 	app.TagService = tag.NewService(app.DB)
+	app.CommentService = comment.NewService(app.DB)
+	app.BlogClapService = blogclap.NewService(app.DB)
+	app.CommentClapService = commentclap.NewService(app.DB)
 
 	return app, nil
 }

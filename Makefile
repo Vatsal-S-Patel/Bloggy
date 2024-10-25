@@ -14,5 +14,8 @@ migratedown:
 migrateforce:
 	migrate -path internal/migrations -database $(POSTGRES_URL_BLOGGY) force ${n}
 
+migrateversion:
+	migrate -path internal/migrations -database $(POSTGRES_URL_BLOGGY) version
+
 lint:
 	golangci-lint run

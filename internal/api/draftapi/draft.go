@@ -213,11 +213,20 @@ func (api *api) Update(c *fiber.Ctx) error {
 		})
 	}
 
+	authorID, err := utils.ExtractUserIDFromContext(c)
+	if err != nil {
+		api.app.Logger.Error("failed to extract user id from context:" + err.Error())
+		return models.SendResponse(c, fiber.StatusInternalServerError, models.Response{
+			Message: "Internal Server Error",
+		})
+	}
+
 	draft := &models.Draft{
 		ID:        draftID,
 		Title:     updateDraftRequest.Title,
 		Subtitle:  updateDraftRequest.Subtitle,
 		Content:   updateDraftRequest.Content,
+		AuthorID:  authorID,
 		UpdatedAt: time.Now(),
 	}
 

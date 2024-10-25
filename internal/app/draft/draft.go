@@ -70,9 +70,9 @@ func (s *service) Get(draftID uuid.UUID) (*models.Draft, error) {
 }
 
 func (s *service) Update(draft *models.Draft) error {
-	query := `UPDATE drafts SET title=$1, subtitle=$2, content=$3, updated_at=$4 WHERE id=$5`
+	query := `UPDATE drafts SET title=$1, subtitle=$2, content=$3, updated_at=$4 WHERE id=$5 AND author_id=$6`
 
-	res, err := s.DB.Exec(query, draft.Title, draft.Subtitle, draft.Content, draft.UpdatedAt, draft.ID)
+	res, err := s.DB.Exec(query, draft.Title, draft.Subtitle, draft.Content, draft.UpdatedAt, draft.ID, draft.AuthorID)
 	if err != nil {
 		return err
 	}

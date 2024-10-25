@@ -112,6 +112,7 @@ func (api *api) Publish(c *fiber.Ctx) error {
 		Subtitle:  publishBlogRequest.Subtitle,
 		Content:   publishBlogRequest.Content,
 		FtImage:   publishBlogRequest.FtImage,
+		Claps:     0,
 		AuthorID:  authorID,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
